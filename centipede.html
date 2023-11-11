@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Sýnidæmi um Z-árekstur</title> 
+	</head>
+	<body>
+        <canvas id="c"  width="800" height="800"></canvas>
+		<script src="js/three.js"></script>
+        <script src="js/examples/js/controls/OrbitControls.js"></script>
+		<script src="js/examples/js/libs/dat.gui.min.js"></script>
+        <script>
+            // Ná í striga
+            const canvas = document.querySelector('#c');
+
+            // Skilgreina sviðsnet
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color('black');
+            
+
+            // Skilgreina myndavél og staðsetja hana
+            const camera = new THREE.PerspectiveCamera( 100, canvas.clientWidth/canvas.clientHeight, 0.1, 1000 );
+            camera.position.set(10, 8, 0);
+
+            // Þarf að uppfæra ofanvörpunarfylki ef stikar myndavélar breytast
+            function updateCamera() {
+                camera.updateProjectionMatrix();
+            }
+
+            // Bæta við músarstýringu
+            const controls = new THREE.OrbitControls( camera, canvas );
+
+            // Skilgreina birtingaraðferð með afbjögun (antialias)
+            const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+
+
+            // Búa til sléttu með Phong áferð
+            const planeGeometry = new THREE.PlaneGeometry( 16, 15 );
+            const planeMaterial = new THREE.MeshPhongMaterial( { color: 0xcccccc } );
+            const plane = new THREE.Mesh( planeGeometry, planeMaterial );
+            plane.rotation.x = -0.5 * Math.PI;
+            plane.position.set(0, -0.5, 0);
+            scene.add( plane );
+
+            const base = new THREE.Object3D();
+            scene.add(base);
+
+            function createBall(sphereRadius, i){
+              const sphereMat = new THREE.MeshPhongMaterial();
+              sphereMat.color.setHSL(i * .73, 1, 0.5);
+              const mesh = new THREE.Mesh(sphereGeo, sphereMat);
+              mesh.position.set(-sphereRadius-1, sphereRadius, i * sphereRadius * -2);
+              return mesh;
+            }
+
+
+           //FROM 07-primitives
+           function addSolidGeometry(x, y, geometry, xpos, zpos) {
+                const mesh = new THREE.Mesh(geometry, createMaterial());
+                return addObject(x, y, mesh, xpos, zpos);
+            }
+            // Skilar Phong áferð með slembnum lit
+            function createMaterial() {
+                const material = new THREE.MeshPhongMaterial({side: THREE.DoubleSide});
+                material.color.setHSL(Math.random(), 1, 0.5);
+                return material;
+            }
+            
+            //const spread = 18;          // Fjarlægð á milli hluta
+            function addObject(x, y, obj, xpos, zpos) {
+                obj.position.x = xpos;// * spread;
+                obj.position.y = y;// * spread;
+                obj.position.z = zpos;// * spread;
+                return obj
+            }
+            // Sívalningur  (radiusTop, radiusBottom, height, radialSegments)
+            function createHeadMushromm(xpos, zpos){
+              const rslt = new THREE.Object3D();
+              const head = addSolidGeometry(0, 0.5, new THREE.CylinderGeometry(0.3, 0.5, 0.5, 24), xpos, zpos);
+              rslt.add(addSolidGeometry(0, 0.0, new THREE.CylinderGeometry(0.4, 0.4, 0.5, 24), xpos, zpos));
+              rslt.add(head);
+              scene.add(rslt);
+              return head;
+            }
+
+            function createTopMushroom(xpos, zpos){
+              const rslt = new THREE.Object3D();
+              const head = addSolidGeometry(0, 0.75, new THREE.CylinderGeometry(0.3, 0.4, 0.25, 24), xpos, zpos);
+              rslt.add(head);
+              scene.add(rslt);
+              return head;
+            }
+
+            function createHeadMushroom(xpos, zpos){
+              const rslt = new THREE.Object3D();
+              const head = addSolidGeometry(0, 0.5, new THREE.CylinderGeometry(0.4, 0.5, 0.25, 24), xpos, zpos);
+              rslt.add(head);
+              scene.add(rslt);
+              return head;
+            }
+            function createStemMushroom(xpos, zpos){
+              const rslt = new THREE.Object3D();
+              const stem = addSolidGeometry(0, 0.25, new THREE.CylinderGeometry(0.4, 0.4, 0.25, 24), xpos, zpos);
+              rslt.add(stem);
+              scene.add(rslt);
+              return stem;
+            }
+            
+            function createBottomMushroom(xpos, zpos){
+              const rslt = new THREE.Object3D();
+              const stem = addSolidGeometry(0, 0.0, new THREE.CylinderGeometry(0.4, 0.4, 0.25, 24), xpos, zpos);
+              rslt.add(stem);
+              scene.add(rslt);
+              return stem;
+            }
+            
+            const shroomTop1 = createTopMushroom(-6.5, 0);
+            const shroomHead1 = createHeadMushroom(-6.5, 0);
+            const shroomStem1 = createStemMushroom(-6.5, 0);
+            const shroomBottom1 = createBottomMushroom(-6.5, 0);
+            
+            const shroomTop2 = createTopMushroom(-5.5, -4);
+            const shroomHead2 = createHeadMushroom(-5.5, -4);
+            const shroomStem2 = createStemMushroom(-5.5, -4);
+            const shroomBottom2 = createBottomMushroom(-5.5, -4);
+
+            const shroomTop3 = createTopMushroom(-4.5, 3);
+            const shroomHead3 = createHeadMushroom(-4.5, 3);
+            const shroomStem3 = createStemMushroom(-4.5, 3);
+            const shroomBottom3 = createBottomMushroom(-4.5, 3);
+
+            const shroomTop4 = createTopMushroom(-3.5, -2);
+            const shroomHead4 = createHeadMushroom(-3.5, -2);
+            const shroomStem4 = createStemMushroom(-3.5, -2);
+            const shroomBottom4 = createBottomMushroom(-3.5, -2);
+
+            const shroomTop5 = createTopMushroom(-2.5, -3);
+            const shroomHead5 = createHeadMushroom(-2.5, -3);
+            const shroomStem5 = createStemMushroom(-2.5, -3);
+            const shroomBottom5 = createBottomMushroom(-2.5, -3);
+
+            const shroomTop6 = createTopMushroom(-1.5, 5);
+            const shroomHead6 = createHeadMushroom(-1.5, 5);
+            const shroomStem6 = createStemMushroom(-1.5, 5);
+            const shroomBottom6 = createBottomMushroom(-1.5, 5);
+
+            const shroomTop7 = createTopMushroom(-0.5, -5);
+            const shroomHead7 = createHeadMushroom(-0.5, -5);
+            const shroomStem7 = createStemMushroom(-0.5, -5);
+            const shroomBottom7 = createBottomMushroom(-0.5, -5);
+
+            const shroomTop8 = createTopMushroom(0.5, 0);
+            const shroomHead8 = createHeadMushroom(0.5, 0);
+            const shroomStem8 = createStemMushroom(0.5, 0);
+            const shroomBottom8 = createBottomMushroom(0.5, 0);
+
+            const shroomTop9 = createTopMushroom(1.5, -5);
+            const shroomHead9 = createHeadMushroom(1.5, -5);
+            const shroomStem9 = createStemMushroom(1.5, -5);
+            const shroomBottom9 = createBottomMushroom(1.5, -5);
+
+            const shroomTop10 = createTopMushroom(2.5, 3);
+            const shroomHead10 = createHeadMushroom(2.5, 3);
+            const shroomStem10 = createStemMushroom(2.5, 3);
+            const shroomBottom10 = createBottomMushroom(2.5, 3);
+
+            const shroomTop11 = createTopMushroom(3.5, -2);
+            const shroomHead11 = createHeadMushroom(3.5, -2);
+            const shroomStem11 = createStemMushroom(3.5, -2);
+            const shroomBottom11 = createBottomMushroom(3.5, -2);
+
+            const shroomTop12 = createTopMushroom(4.5, 1);
+            const shroomHead12 = createHeadMushroom(4.5, 1);
+            const shroomStem12 = createStemMushroom(4.5, 1);
+            const shroomBottom12 = createBottomMushroom(4.5, 1);
+
+            const shroomTop13 = createTopMushroom(5.5, -6);
+            const shroomHead13 = createHeadMushroom(5.5, -6);
+            const shroomStem13 = createStemMushroom(5.5, -6);
+            const shroomBottom13 = createBottomMushroom(5.5, -6);
+
+            const shroomTop14 = createTopMushroom(6.5, 0);
+            const shroomHead14 = createHeadMushroom(6.5, 0);
+            const shroomStem14 = createStemMushroom(6.5, 0);
+            const shroomBottom14 = createBottomMushroom(6.5, 0);
+
+
+            const shroomTopCent1 = createTopMushroom(11, 0);
+            const shroomHeadCent1 = createHeadMushroom(11, 0);
+            const shroomStemCent1 = createStemMushroom(11, 0);
+            const shroomBottomCent1 = createBottomMushroom(11, 0);
+
+            const shroomTopCent2 = createTopMushroom(11, -1);
+            const shroomHeadCent2 = createHeadMushroom(11, -1);
+            const shroomStemCent2 = createStemMushroom(11, -1);
+            const shroomBottomCent2 = createBottomMushroom(11, -1);
+
+            const shroomTopCent3 = createTopMushroom(11, -2);
+            const shroomHeadCent3 = createHeadMushroom(11, -2);
+            const shroomStemCent3 = createStemMushroom(11, -2);
+            const shroomBottomCent3 = createBottomMushroom(11, -2);
+
+            const shroomTopCent4 = createTopMushroom(11, -3);
+            const shroomHeadCent4 = createHeadMushroom(11, -3);
+            const shroomStemCent4 = createStemMushroom(11, -3);
+            const shroomBottomCent4 = createBottomMushroom(11, -3);
+
+            const shroomTopCent5 = createTopMushroom(11, -4);
+            const shroomHeadCent5 = createHeadMushroom(11, -4);
+            const shroomStemCent5 = createStemMushroom(11, -4);
+            const shroomBottomCent5 = createBottomMushroom(11, -4);
+
+            const shroomTopCent6 = createTopMushroom(11, -5);
+            const shroomHeadCent6 = createHeadMushroom(11, -5);
+            const shroomStemCent6 = createStemMushroom(11, -5);
+            const shroomBottomCent6 = createBottomMushroom(11, -5);
+
+            const shot1 = addSolidGeometry(0, 0, new THREE.CylinderGeometry(0.1, 0.1, 0.5, 6), 11, 5);
+            const shot2 = addSolidGeometry(0, 0, new THREE.CylinderGeometry(0.1, 0.1, 0.5, 6), 11, 4);
+            const shot3 = addSolidGeometry(0, 0, new THREE.CylinderGeometry(0.1, 0.1, 0.5, 6), 11, 3);
+            const shot4 = addSolidGeometry(0, 0, new THREE.CylinderGeometry(0.1, 0.1, 0.5, 6), 11, 2);
+            const shot5 = addSolidGeometry(0, 0, new THREE.CylinderGeometry(0.1, 0.1, 0.5, 6), 11, 1);
+            shot1.rotation.z = 80;
+            shot2.rotation.z = 80;
+            shot3.rotation.z = 80;
+            shot4.rotation.z = 80;
+            shot5.rotation.z = 80;
+          
+            
+            scene.add(shot1);
+            scene.add(shot2);
+            scene.add(shot3);
+            scene.add(shot4);
+            scene.add(shot5);
+            
+            
+            const dwarf = addSolidGeometry(0, 0, new THREE.CylinderGeometry(0.5, 0.5, 1, 24), 7.5, 0);
+            scene.add(dwarf);
+
+            // Búum til nokkrar kúlur
+            const sphereRadius = 0.5;
+
+            var sphereMove = -1
+            var sphereMove2 = 0;
+            var sphereMove3 = 1;
+            var sphereMove4 = 2;
+            var sphereMove5 = 3;
+            var sphereMove6 = 4;
+            const sphereGeo = new THREE.SphereGeometry(0.5, 32, 16);
+            //const numSpheres = 20;
+            const numSpheres = 1;
+            //for (let i = 0; i < numSpheres; ++i) {
+            const ball = createBall(sphereRadius, 1);
+            ball.position.set(-6.5, 0, -1);
+            scene.add(ball);
+            const ball2 = createBall(sphereRadius, 2);
+            scene.add(ball2);
+            const ball3 = createBall(sphereRadius, 3);
+            scene.add(ball3);
+            const ball4 = createBall(sphereRadius, 4);
+            scene.add(ball4);
+            const ball5 = createBall(sphereRadius, 5);
+            scene.add(ball5);
+            const ball6 = createBall(sphereRadius, 6);
+            scene.add(ball6);
+
+            
+            // Skilgreina ljósgjafa og bæta honum í sviðsnetið
+            const light = new THREE.DirectionalLight(0xFFFFFF, 1);
+            light.position.set(0, 10, 0);
+            light.target.position.set(-5, 0, 0);
+            scene.add(light);
+            scene.add(light.target);
+
+
+      class Ball{
+        constructor(x1Pos, zMove, sphereMove) {
+          this.x1Pos = x1Pos;
+          this.xLimit = x1Pos+1;
+          this.zMove = zMove;
+          this.xMove = zMove;
+
+          this.varXTurnAround = zMove;
+          this.sphereMove = sphereMove;
+          this.isMovingDown = false;
+
+          this.isStillMoving = true;
+      }
+      getZMove(){
+        return this.zMove;
+      }
+      getXPos(){
+        return this.x1Pos;
+      }
+      setXPos(xPos){
+        this.x1Pos = xPos;
+      }
+      getVarXTurnAround(){
+        return this.varXTurnAround;
+      }
+      getXLimit(){
+        return this.xLimit;
+      }
+      trunAround(){
+        this.varXTurnAround*=-1;
+        this.zMove*=-1;
+        this.xLimit+=1;
+      }
+      getXMove(){
+        return this.xMove;
+      }
+
+      getSphereMove(){
+        return this.sphereMove;
+      }
+      setSphereMove(incmoingSphereMove){
+        this.sphereMove = incmoingSphereMove;
+      }
+      getIsMovingDown(){
+        return this.isMovingDown;
+      }
+      
+      setIsMovingDown(isMovingDown){
+        return this.isMovingDown = isMovingDown;
+      }
+
+      getIsStillMoving(){
+        return this.isStillMoving;
+      }
+
+      setIsStillMoving(isStillMoving){
+        this.isStillMoving = isStillMoving;
+      }
+      
+    }
+
+    var ball1Info = new Ball(-7.5, 0.025, sphereMove);
+    var ball2Info = new Ball(-7.5, 0.025, sphereMove2);
+    var ball3Info = new Ball(-7.5, 0.025, sphereMove3);
+    var ball4Info = new Ball(-7.5, 0.025, sphereMove4);
+    var ball5Info = new Ball(-7.5, 0.025, sphereMove5);
+    var ball6Info = new Ball(-7.5, 0.025, sphereMove6);
+
+   function turnAroundFromMushroom(ballTemp, ballInfo){
+    return ballInfo.getVarXTurnAround() < 0 && (Math.abs(shroomBottom1.position.x - ballInfo.getXPos()) <= 1 && shroomBottom1.position.z+1 > ballTemp.position.z)
+            || ballInfo.getVarXTurnAround() < 0 && (Math.abs(shroomBottom3.position.x - ballInfo.getXPos()) <= 1 && shroomBottom3.position.z+1 > ballTemp.position.z)
+            || ballInfo.getVarXTurnAround() < 0 && (Math.abs(shroomBottom5.position.x - ballInfo.getXPos()) <= 1 && shroomBottom5.position.z+1 > ballTemp.position.z)
+            
+            || ballInfo.getVarXTurnAround() > 0 && (Math.abs(shroomBottom6.position.x - ballInfo.getXPos()) <= 1 && shroomBottom6.position.z-1 < ballTemp.position.z)
+
+            || ballInfo.getVarXTurnAround() < 0 && (Math.abs(shroomBottom7.position.x - ballInfo.getXPos()) <= 1 && shroomBottom7.position.z+1 > ballTemp.position.z)
+            
+            || ballInfo.getVarXTurnAround() > 0 && (Math.abs(shroomBottom8.position.x - ballInfo.getXPos()) <= 1 && shroomBottom8.position.z-1 < ballTemp.position.z)
+
+            || ballInfo.getVarXTurnAround() < 0 && (Math.abs(shroomBottom9.position.x - ballInfo.getXPos()) <= 1 && shroomBottom9.position.z+1 > ballTemp.position.z)
+            
+            || ballInfo.getVarXTurnAround() > 0 && (Math.abs(shroomBottom10.position.x - ballInfo.getXPos()) <= 1 && shroomBottom10.position.z-1 < ballTemp.position.z)
+
+            || ballInfo.getVarXTurnAround() < 0 && (Math.abs(shroomBottom11.position.x - ballInfo.getXPos()) <= 1 && shroomBottom11.position.z+1 > ballTemp.position.z)
+            
+            || ballInfo.getVarXTurnAround() > 0 && (Math.abs(shroomBottom12.position.x - ballInfo.getXPos()) <= 1 && shroomBottom12.position.z-1 < ballTemp.position.z)
+
+            || ballInfo.getVarXTurnAround() < 0 && (Math.abs(shroomBottom13.position.x - ballInfo.getXPos()) <= 1 && shroomBottom13.position.z+1 > ballTemp.position.z)
+
+            || ballInfo.getVarXTurnAround() > 0 && (Math.abs(shroomBottom14.position.x - ballInfo.getXPos()) <= 1 && shroomBottom14.position.z-1 < ballTemp.position.z)
+
+
+            || ballInfo.getVarXTurnAround() > 0 && (Math.abs(shroomBottomCent1.position.x - ballInfo.getXPos()) <= 1 && shroomBottomCent1.position.z-1 < ballTemp.position.z)
+            || ballInfo.getVarXTurnAround() > 0 && (Math.abs(shroomBottomCent2.position.x - ballInfo.getXPos()) <= 1 && shroomBottomCent2.position.z-1 < ballTemp.position.z)
+            || ballInfo.getVarXTurnAround() > 0 && (Math.abs(shroomBottomCent3.position.x - ballInfo.getXPos()) <= 1 && shroomBottomCent3.position.z-1 < ballTemp.position.z)
+            || ballInfo.getVarXTurnAround() > 0 && (Math.abs(shroomBottomCent4.position.x - ballInfo.getXPos()) <= 1 && shroomBottomCent4.position.z-1 < ballTemp.position.z)
+            || ballInfo.getVarXTurnAround() > 0 && (Math.abs(shroomBottomCent5.position.x - ballInfo.getXPos()) <= 1 && shroomBottomCent5.position.z-1 < ballTemp.position.z)
+            || ballInfo.getVarXTurnAround() > 0 && (Math.abs(shroomBottomCent6.position.x - ballInfo.getXPos()) <= 1 && shroomBottomCent6.position.z-1 < ballTemp.position.z)
+   }
+
+   var partOfCentipede = [true, true, true, true, true, true];
+
+   var score = 0;
+
+    function whereShouldTheBallGo(ballTemp, ballInfo){
+      if(ballInfo.getIsStillMoving()){
+      
+      if(ballInfo.getSphereMove() > -6.5 && ballInfo.getSphereMove() < 6.5){
+        if(!turnAroundFromMushroom(ballTemp, ballInfo)){
+          const temp = ballInfo.getSphereMove() + ballInfo.getZMove();
+          ballInfo.setSphereMove(temp);
+          ballTemp.position.set(ballInfo.getXPos(), 0, temp);
+        }
+        else{
+          const temp = ballInfo.getXPos() + ballInfo.getXMove();
+          ballInfo.setXPos(temp);
+          ballTemp.position.set(temp, 0, ballInfo.getSphereMove());
+          if(ballInfo.getXPos() > ballInfo.getXLimit()){
+            ballInfo.trunAround();
+          }}
+        }
+        else{
+          const temp = ballInfo.getXPos() + ballInfo.getXMove();
+          ballInfo.setXPos(temp);
+          if(ballInfo.getXPos() > ballInfo.getXLimit()){
+            ballInfo.setSphereMove(ballInfo.getSphereMove() - ballInfo.getVarXTurnAround());
+            ballInfo.trunAround();
+            ballTemp.position.set(temp, 0, ballInfo.getSphereMove());
+          }
+          else{
+            ballTemp.position.set(temp, 0, ballInfo.getSphereMove());
+          }
+        }
+      }
+    }
+
+      class Bullet{
+        constructor(isShotTravelling, shotStartingX, shotStartingZ) {
+          this.isShotTravelling = isShotTravelling;
+      
+          this.shotStartingX = shotStartingX;
+
+          this.shotStartingZ = shotStartingZ;
+        }
+        getIsShotTravelling(){
+          return this.isShotTravelling;
+        }
+        setIsShotTravelling(isShotTravelling){
+          return this.isShotTravelling = isShotTravelling;
+        }
+        
+        getShotStartingX(){
+          return this.shotStartingX;
+        }
+        setShotStartingX(shotStartingX){
+          return this.shotStartingX = shotStartingX;
+        }
+        
+        getShotStartingZ(){
+          return this.shotStartingZ;
+        }
+        setShotStartingZ(shotStartingZ){
+          return this.shotStartingZ = shotStartingZ;
+        }
+      }
+
+
+
+
+      var bullet1Info = new Bullet(false, 0, 0);
+      var bullet2Info = new Bullet(false, 0, 0);
+      var bullet3Info = new Bullet(false, 0, 0);
+      var bullet4Info = new Bullet(false, 0, 0);
+      var bullet5Info = new Bullet(false, 0, 0);
+      
+
+      function travellingShot(shotTemp, bulletXInfo){
+        if(shotTemp.position.x < -9){
+          shotTemp.position.set(11, 0, 5);
+          bulletXInfo.setIsShotTravelling(false);
+        }
+        else if (bulletXInfo.getIsShotTravelling()){
+          if (shotTemp.position.x > 8){
+            bulletXInfo.setShotStartingX(dwarf.position.x);
+            bulletXInfo.setShotStartingZ(dwarf.position.z);
+            shotTemp.position.set( bulletXInfo.getShotStartingX(), 0, bulletXInfo.getShotStartingZ());
+          }
+          else{
+            bulletXInfo.setShotStartingX(bulletXInfo.getShotStartingX()-0.05)
+            shotTemp.position.set(bulletXInfo.getShotStartingX(), 0, bulletXInfo.getShotStartingZ());
+          }
+      }
+
+      }
+    var numberOfShots
+
+    var xSpeed = 0.1;
+    var ySpeed = 0.1;
+    document.addEventListener("keydown", onDocumentKeyDown, false);
+          function onDocumentKeyDown(event) {
+              var keyCode = event.which;
+              if (keyCode == 83) { 
+                  dwarf.position.x += ySpeed;
+              } else if (keyCode == 87) {
+                dwarf.position.x -= ySpeed;
+              } else if (keyCode == 68) { 
+                dwarf.position.z -= xSpeed;
+              } else if (keyCode == 65) {
+                dwarf.position.z += xSpeed;
+              } else if (keyCode == 32) {
+                //dwarf.position.set(7, 0, 0);
+                if(!bullet1Info.getIsShotTravelling()){
+                  bullet1Info.setIsShotTravelling(true);
+                }
+                else if(!bullet2Info.getIsShotTravelling()){
+                  bullet2Info.setIsShotTravelling(true);
+                }
+                
+                else if(!bullet3Info.getIsShotTravelling()){
+                  bullet3Info.setIsShotTravelling(true);
+                }
+                
+                else if(!bullet4Info.getIsShotTravelling()){
+                  bullet4Info.setIsShotTravelling(true);
+                }
+                
+                else if(!bullet5Info.getIsShotTravelling()){
+                  bullet5Info.setIsShotTravelling(true);
+                }
+              }
+          };
+
+      function bulletHitQ(shotTemp, bulletXInfo){
+        var hit = false;
+        if(ball.position.x+0.5 > shotTemp.position.x && shotTemp.position.x > ball.position.x-0.5){
+          if(ball.position.z+0.5 > shotTemp.position.z && shotTemp.position.z > ball.position.z-0.5){
+            var xtemp = ball.position.x;
+            var ztemp = ball.position.z;
+            ball.position.set(9, 0, 9);
+            ball1Info.setIsStillMoving(false);
+            shroomTopCent1.position.set(xtemp,0.75,ztemp);
+            shroomHeadCent1.position.set(xtemp,0.5,ztemp);
+            shroomStemCent1.position.set(xtemp,0.25,ztemp);
+            shroomBottomCent1.position.set(xtemp,0.0,ztemp);
+            hit = true;
+            score += 100;
+            document.getElementById("score").innerHTML = "score: " + this.score;
+            partOfCentipede[0] = false;
+          }
+        }
+        if(ball2.position.x+0.5 > shotTemp.position.x && shotTemp.position.x > ball2.position.x-0.5){
+          if(ball2.position.z+0.5 > shotTemp.position.z && shotTemp.position.z > ball2.position.z-0.5){
+            var xtemp = ball2.position.x;
+            var ztemp = ball2.position.z;
+            ball2.position.set(9, 0, 9);
+            ball2Info.setIsStillMoving(false);
+            shroomTopCent2.position.set(xtemp,0.75,ztemp);
+            shroomHeadCent2.position.set(xtemp,0.5,ztemp);
+            shroomStemCent2.position.set(xtemp,0.25,ztemp);
+            shroomBottomCent2.position.set(xtemp,0.0,ztemp);
+            hit = true;
+            if(!partOfCentipede[0]){
+              score += 100;
+              document.getElementById("score").innerHTML = "score: " + this.score;
+              partOfCentipede[1] = false;
+            }else{
+              score += 10;
+              document.getElementById("score").innerHTML = "score: " + this.score;
+              partOfCentipede[1] = false;
+            }
+          }
+        }
+        if(ball3.position.x+0.5 > shotTemp.position.x && shotTemp.position.x > ball3.position.x-0.5){
+          if(ball3.position.z+0.5 > shotTemp.position.z && shotTemp.position.z > ball3.position.z-0.5){
+            var xtemp = ball3.position.x;
+            var ztemp = ball3.position.z;
+            shroomTopCent3.position.set(xtemp,0,75,ztemp);
+            shroomHeadCent3.position.set(xtemp,0.5,ztemp);
+            shroomStemCent3.position.set(xtemp,0.25,ztemp);
+            shroomBottomCent3.position.set(xtemp,0.0,ztemp);
+            ball3.position.set(9, 0, 9);
+            ball3Info.setIsStillMoving(false);
+            hit = true;
+            if(!partOfCentipede[1]){
+              score += 100;
+              document.getElementById("score").innerHTML = "score: " + this.score;
+              partOfCentipede[2] = false;
+            }else{
+              score += 10;
+              document.getElementById("score").innerHTML = "score: " + this.score;
+              partOfCentipede[2] = false;
+            }
+          }
+        }
+        if(ball4.position.x+0.5 > shotTemp.position.x && shotTemp.position.x > ball4.position.x-0.5){
+          if(ball4.position.z+0.5 > shotTemp.position.z && shotTemp.position.z > ball4.position.z-0.5){
+            var xtemp = ball4.position.x;
+            var ztemp = ball4.position.z;
+            shroomTopCent4.position.set(xtemp,0.75,ztemp);
+            shroomHeadCent4.position.set(xtemp,0.5,ztemp);
+            shroomStemCent4.position.set(xtemp,0.25,ztemp);
+            shroomBottomCent4.position.set(xtemp,0.0,ztemp);
+            ball4.position.set(9, 0, 9);
+            ball4Info.setIsStillMoving(false);
+            hit = true;
+            if(!partOfCentipede[2]){
+              score += 100;
+              document.getElementById("score").innerHTML = "score: " + this.score;
+              partOfCentipede[3] = false;
+            }else{
+              score += 10;
+              document.getElementById("score").innerHTML = "score: " + this.score;
+              partOfCentipede[3] = false;
+            }
+          }
+        }
+        if(ball5.position.x+0.5 > shotTemp.position.x && shotTemp.position.x > ball5.position.x-0.5){
+          if(ball5.position.z+0.5 > shotTemp.position.z && shotTemp.position.z > ball5.position.z-0.5){
+            var xtemp = ball5.position.x;
+            var ztemp = ball5.position.z;
+            shroomTopCent5.position.set(xtemp,0.75,ztemp);
+            shroomHeadCent5.position.set(xtemp,0.5,ztemp);
+            shroomStemCent5.position.set(xtemp,0.25,ztemp);
+            shroomBottomCent5.position.set(xtemp,0.0,ztemp);
+            ball5.position.set(9, 0, 9);
+            ball5Info.setIsStillMoving(false);
+            hit = true;
+            if(!partOfCentipede[3]){
+              score += 100;
+              document.getElementById("score").innerHTML = "score: " + this.score;
+              partOfCentipede[4] = false;
+            }else{
+              score += 10;
+              document.getElementById("score").innerHTML = "score: " + this.score;
+              partOfCentipede[4] = false;
+            }
+          }
+        }
+        if(ball6.position.x+0.5 > shotTemp.position.x && shotTemp.position.x > ball6.position.x-0.5){
+          if(ball6.position.z+0.5 > shotTemp.position.z && shotTemp.position.z > ball6.position.z-0.5){
+            var xtemp = ball6.position.x;
+            var ztemp = ball6.position.z;
+            shroomTopCent6.position.set(xtemp,0.75,ztemp);
+            shroomHeadCent6.position.set(xtemp,0.5,ztemp);
+            shroomStemCent6.position.set(xtemp,0.25,ztemp);
+            shroomBottomCent6.position.set(xtemp,0.0,ztemp);
+            ball6.position.set(9, 0, 9);
+            ball6Info.setIsStillMoving(false);
+            hit = true;
+            if(!partOfCentipede[4]){
+              score += 100;
+              document.getElementById("score").innerHTML = "score: " + this.score;
+              partOfCentipede[5] = false;
+            }else{
+              score += 10;
+              document.getElementById("score").innerHTML = "score: " + this.score;
+              partOfCentipede[5] = false;
+            }
+          }
+        }
+        if(checkIfShroomsHit(shroomTop1,shroomHead1,shroomStem1,shroomBottom1,shotTemp)){
+          hit = true;
+        }if(checkIfShroomsHit(shroomTop2,shroomHead2,shroomStem2,shroomBottom2,shotTemp)){
+          hit = true;
+        }if(checkIfShroomsHit(shroomTop3,shroomHead3,shroomStem3,shroomBottom3,shotTemp)){
+          hit = true;
+        }if(checkIfShroomsHit(shroomTop4,shroomHead4,shroomStem4,shroomBottom4,shotTemp)){
+          hit = true;
+        }if(checkIfShroomsHit(shroomTop5,shroomHead5,shroomStem5,shroomBottom5,shotTemp)){
+          hit = true;
+        }if(checkIfShroomsHit(shroomTop6,shroomHead6,shroomStem6,shroomBottom6,shotTemp)){
+          hit = true;
+        }if(checkIfShroomsHit(shroomTop7,shroomHead7,shroomStem7,shroomBottom7,shotTemp)){
+          hit = true;
+        }if(checkIfShroomsHit(shroomTop8,shroomHead8,shroomStem8,shroomBottom8,shotTemp)){
+          hit = true;
+        } 
+        if(checkIfShroomsHit(shroomTop9,shroomHead9,shroomStem9,shroomBottom9,shotTemp)){
+          hit = true;
+        }
+        if(checkIfShroomsHit(shroomTop10,shroomHead10,shroomStem10,shroomBottom10,shotTemp)){
+          hit = true;
+        }
+        if(checkIfShroomsHit(shroomTop11,shroomHead11,shroomStem11,shroomBottom11,shotTemp)){
+          hit = true;
+        }
+        if(checkIfShroomsHit(shroomTop12,shroomHead12,shroomStem12,shroomBottom12,shotTemp)){
+          hit = true;
+        }
+        if(checkIfShroomsHit(shroomTop13,shroomHead13,shroomStem13,shroomBottom13,shotTemp)){
+          hit = true;
+        }
+        if(checkIfShroomsHit(shroomTop14,shroomHead14,shroomStem14,shroomBottom14,shotTemp)){
+          hit = true;
+        }
+        
+
+        if(checkIfShroomsHit(shroomTopCent1,shroomHeadCent1,shroomStemCent1,shroomBottomCent1,shotTemp)){
+          hit = true;
+        }
+        if(checkIfShroomsHit(shroomTopCent2,shroomHeadCent2,shroomStemCent2,shroomBottomCent2,shotTemp)){
+          hit = true;
+        }
+        if(checkIfShroomsHit(shroomTopCent3,shroomHeadCent3,shroomStemCent3,shroomBottomCent3,shotTemp)){
+          hit = true;
+        }
+        if(checkIfShroomsHit(shroomTopCent4,shroomHeadCent4,shroomStemCent4,shroomBottomCent4,shotTemp)){
+          hit = true;
+        }
+        if(checkIfShroomsHit(shroomTopCent5,shroomHeadCent5,shroomStemCent5,shroomBottomCent5,shotTemp)){
+          hit = true;
+        }
+        if(checkIfShroomsHit(shroomTopCent6,shroomHeadCent6,shroomStemCent6,shroomBottomCent6,shotTemp)){
+          hit = true;
+        }
+
+        if(hit){
+          shotTemp.position.set(11, 0, 5);
+          bulletXInfo.setIsShotTravelling(false);
+        }
+      }
+
+      function checkIfShroomsHit(shroomTopX, shroomHeadX, shroomStemX, shroomBottomX, shotTempX){
+        if(shroomTopX.position.x+0.5 > shotTempX.position.x && shotTempX.position.x > shroomTopX.position.x-0.5){
+            if(shroomTopX.position.z+0.5 > shotTempX.position.z && shotTempX.position.z > shroomTopX.position.z-0.5){
+              shroomTopX.position.set(11,0,9);
+              return true;
+            }
+          }
+          else if(shroomHeadX.position.x+0.5 > shotTempX.position.x && shotTempX.position.x > shroomHeadX.position.x-0.5){
+            if(shroomHeadX.position.z+0.5 > shotTempX.position.z && shotTempX.position.z > shroomHeadX.position.z-0.5){
+              shroomHeadX.position.set(11,0,9);
+              return true;
+            }
+          }
+          else if(shroomStemX.position.x+0.5 > shotTempX.position.x && shotTempX.position.x > shroomStemX.position.x-0.5){
+            if(shroomStemX.position.z+0.5 > shotTempX.position.z && shotTempX.position.z > shroomStemX.position.z-0.5){
+              shroomStemX.position.set(11,0,9);
+              return true;
+            }
+          }
+          else if(shroomBottomX.position.x+0.5 > shotTempX.position.x && shotTempX.position.x > shroomBottomX.position.x-0.5){
+            if(shroomBottomX.position.z+0.5 > shotTempX.position.z && shotTempX.position.z > shroomBottomX.position.z-0.5){
+              shroomBottomX.position.set(11,0,9);
+              score += 1;
+              document.getElementById("score").innerHTML = "score: " + this.score;
+              return true;
+            }
+          }
+          return false;
+      }
+
+            
+      // Hreyfifall
+			const animate = function () {
+
+        travellingShot(shot1, bullet1Info);
+        travellingShot(shot2, bullet2Info);
+        travellingShot(shot3, bullet3Info);
+        travellingShot(shot4, bullet4Info);
+        travellingShot(shot5, bullet5Info);
+        
+        whereShouldTheBallGo(ball, ball1Info);
+        whereShouldTheBallGo(ball2, ball2Info);
+        whereShouldTheBallGo(ball3, ball3Info);
+        whereShouldTheBallGo(ball4, ball4Info);
+        whereShouldTheBallGo(ball5, ball5Info);
+        whereShouldTheBallGo(ball6, ball6Info);
+
+        bulletHitQ(shot1, bullet1Info);
+        bulletHitQ(shot2, bullet2Info);
+        bulletHitQ(shot3, bullet3Info);
+        bulletHitQ(shot4, bullet4Info);
+        bulletHitQ(shot5, bullet5Info);
+        
+      
+
+				requestAnimationFrame( animate );
+
+                controls.update();
+				renderer.render( scene, camera );
+			};
+
+			animate();
+		</script>
+    <div>
+      <p id="score"></p>
+      <script>
+      document.getElementById("score").innerHTML = "score: " + score;
+  </script>
+  </div>
+	</body>
+</html>
